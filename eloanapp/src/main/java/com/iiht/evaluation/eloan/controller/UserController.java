@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.iiht.evaluation.eloan.dao.ConnectionDao;
 import com.iiht.evaluation.eloan.model.ApprovedLoan;
 import com.iiht.evaluation.eloan.model.LoanInfo;
+import com.iiht.evaluation.eloan.model.User;
 import com.mysql.cj.xdevapi.Statement;
 
 
@@ -51,13 +52,21 @@ private ConnectionDao connDao;
 		String viewName = "";
 		try {
 			switch (action) {
+			case "registernewuser":
+				viewName=registernewuser(request,response);
+				break;
+			case "validate":
+				viewName=validate(request,response);
+				break;
+			case "placeloan":
+				viewName=placeloan(request,response);
+				break;
+			case "application1":
+				viewName=application1(request,response);
+				break;
 			case "editLoanProcess"  :
 				viewName=editLoanProcess(request,response);
 				break;
-			case "registerNewUser":
-			viewName=registerNewUser(request,response);
-			break;
-			
 			case "registeruser":
 				viewName=registerUser(request,response);
 				break;
@@ -86,61 +95,62 @@ private ConnectionDao connDao;
 					request.getRequestDispatcher(viewName);
 			dispatch.forward(request, response);
 	}
+	private String validate(HttpServletRequest request, HttpServletResponse response) throws SQLException {
+		System.out.println("inside the validate");
+		String uname = request.getParameter("loginid");
+		String passwd = request.getParameter("password");
+		User user = new User(uname,passwd);
+		String viewPage = connDao.validateUser(user);
+		return viewPage;
+	}
+	private String placeloan(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		System.out.println("Inside the place loan method...");
+		String applno = request.getParameter("applno");
+		String purpose = request.getParameter("purpose");
+		int amount = Integer.parseInt(request.getParameter("amount"));
+		String appliedDate = request.getParameter("appliedDate");
+		String bstructrue = request.getParameter("bstructrue");
+		String bindicator = request.getParameter("bindicator");
+		String address = request.getParameter("address");
+		String email = request.getParameter("email");
+		String mobile = request.getParameter("mobile");
+		LoanInfo loanInfo = new LoanInfo(applno,purpose,amount,appliedDate,bstructrue,bindicator,address,email,mobile," ");
+		
+		try {
+			connDao.registerLoan(loanInfo);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	private String application1(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		return "application.jsp";
+	}
 	private String editLoanProcess(HttpServletRequest request, HttpServletResponse response) throws SQLException {
 		// TODO Auto-generated method stub
+		System.out.println("inside the editloanprocess");
 		String applno = request.getParameter("applno");
 		String sql = "select * from loaninfo where applno=?";
-		Connection con = connDao.connect();
-		PreparedStatement pst = con.prepareStatement(sql);
-		pst.setString(1,applno);
-		ResultSet rs = pst.executeQuery();
-		rs.next();
-		LoanInfo loanInfo = new LoanInfo();
-		loanInfo.setApplno(rs.getString(1));
-		loanInfo.setPurpose(rs.getString(2));
-		loanInfo.setAmtrequest(rs.getInt(3));
-		loanInfo.setDoa(rs.getString(4));
-		loanInfo.setBstructure(rs.getString(5));
-		loanInfo.setBindicator(rs.getString(6));
-		loanInfo.setAddress(rs.getString(7));
-		loanInfo.setEmail(rs.getString(8));
-		loanInfo.setMobile(rs.getString(9));
-		loanInfo.setStatus(rs.getString(10));
-		
+		LoanInfo loanInfo = connDao.editLoan(applno);
 		request.setAttribute("loaninfo", loanInfo);
 		return "editloanui.jsp";
 	}
 	private String registerUser(HttpServletRequest request, HttpServletResponse response) throws SQLException {
 		// TODO Auto-generated method stub
-		String uname = request.getParameter("loginid");
-		String pwd = request.getParameter("password");
-		Connection conn=connDao.connect();
-		String sql = "insert into user values (?,?)";
-		PreparedStatement pst = conn.prepareStatement(sql);
-		pst.setString(1, uname);
-		pst.setString(2, pwd);
-		pst.executeUpdate();
-		return "index.jsp";
-	}
-	private String registerNewUserPage(HttpServletRequest request, HttpServletResponse response) throws SQLException {
-		// TODO Auto-generated method stub
 		return "newuserui.jsp";
 	}
-	private String registerNewUser(HttpServletRequest request, HttpServletResponse response) throws SQLException {
+	private String registernewuser(HttpServletRequest request, HttpServletResponse response) throws SQLException {
 		// TODO Auto-generated method stub
 		String uname = request.getParameter("loginid");
 		String pwd = request.getParameter("password");
-		Connection conn=connDao.connect();
-		String sql = "insert into user values (?,?)";
-		PreparedStatement pst = conn.prepareStatement(sql);
-		pst.setString(1, uname);
-		pst.setString(2, pwd);
-		pst.executeUpdate();
-		
-		
-		
+		User user = new User(uname,pwd);
+		connDao.createUser(user);
 		return "index.jsp";
 	}
+	
 	private String register(HttpServletRequest request, HttpServletResponse response) {
 		// TODO Auto-generated method stub
 		return "register.jsp";
@@ -148,9 +158,10 @@ private ConnectionDao connDao;
 	private String displaystatus(HttpServletRequest request, HttpServletResponse response) throws SQLException {
 		// TODO Auto-generated method stub
 		String applno = request.getParameter("applno");
-		System.out.println(applno);
 		String viewPage=null;
 		Connection conn = connDao.connect();
+		
+		
 		String sql = "select * from loaninfo where applno =?";
 		String sql1 = "select * from approvedloans where applno =?";
 		PreparedStatement pst = conn.prepareStatement(sql);
@@ -180,6 +191,7 @@ private ConnectionDao connDao;
 			request.setAttribute("aloan", aloan);
 			viewPage="loanDetails.jsp";
 		}
+		
 		return viewPage;
 	}
 

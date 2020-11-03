@@ -10,7 +10,7 @@
 <jsp:include page="header.jsp"/>
 <h4>User Dash Board</h4>
 <div align="right"><a href="index.jsp">Logout</a></div>
-<a href="application.jsp">Apply for Loan</a><br>
+<a href="user?action=application">Apply for Loan</a><br>
 <a href="trackloan.jsp">Track Loan Applicatiion</a><br>
 <a href="editloan.jsp">Edit Loan Application</a>
 <jsp:include page="footer.jsp"/>

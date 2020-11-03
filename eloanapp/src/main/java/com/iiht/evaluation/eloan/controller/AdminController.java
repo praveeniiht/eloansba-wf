@@ -18,7 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.iiht.evaluation.eloan.dao.ConnectionDao;
-import com.iiht.evaluation.eloan.dao.LoanDao;
+import com.iiht.evaluation.eloan.dto.LoanDto;
+import com.iiht.evaluation.eloan.model.ApprovedLoan;
 import com.iiht.evaluation.eloan.model.LoanInfo;
 
 
@@ -87,35 +88,17 @@ public class AdminController extends HttpServlet {
 		String startdate = request.getParameter("startdate");
 		String enddate = request.getParameter("enddate");
 		int emi = Integer.parseInt(request.getParameter("emi"));
-		Connection con = connDao.connect();
-		String sql = "insert into approvedloans values(?,?,?,?,?,?)";
-		String sql1 = "update loaninfo set status='processed' where applno=?";
-		PreparedStatement pst = con.prepareStatement(sql);
-		PreparedStatement pst1 = con.prepareStatement(sql1);
-		pst1.setString(1, applno);
-		pst.setString(1,applno);
-		pst.setInt(2, samount);
-		pst.setInt(3, term);
-		pst.setString(4, startdate);
-		pst.setString(5, enddate);
-		pst.setInt(6, emi);
-		pst.executeUpdate();
-		pst1.executeUpdate();
-		
-		
+		ApprovedLoan aploan = new ApprovedLoan(applno,samount,term,startdate,enddate,emi);
+		connDao.updateLoanStatus(aploan);
 		return "adminhome1.jsp";
 	}
 	private String calemi(HttpServletRequest request, HttpServletResponse response) throws SQLException {
 		// TODO Auto-generated method stub
-		String lid = request.getParameter("lid");
-		Connection con = connDao.connect();
-		String sql = "select applno, amtrequest from loaninfo where applno=?";
-		PreparedStatement pst = con.prepareStatement(sql);
-		pst.setString(1, lid);
-		ResultSet rs = pst.executeQuery();
-		rs.next();
-		request.setAttribute("lid", rs.getString(1));
-		request.setAttribute("ramount", rs.getInt(2));
+		String applno = request.getParameter("lid");
+		LoanDto loandto = connDao.calculateEmi(applno);
+		request.setAttribute("lid", loandto.getApplno());
+		request.setAttribute("ramount", loandto.getAmtRequested());
+		request.setAttribute("emi",loandto.getEmi());
 		return "calemi.jsp";
 	}
 	private String process(HttpServletRequest request, HttpServletResponse response) throws SQLException {
@@ -128,26 +111,9 @@ public class AdminController extends HttpServlet {
 	}
 
 	private String listall(HttpServletRequest request, HttpServletResponse response) throws SQLException {
-		Connection con = connDao.connect();
+		//Connection con = connDao.connect();
 		List<LoanInfo> loans = new ArrayList<LoanInfo>();
-		Statement st = con.createStatement();
-		ResultSet rs = st.executeQuery("select * from loaninfo");
-		while(rs.next()) {
-			String applno = rs.getString(1);
-			 String purpose = rs.getString(2);
-			 int amtrequest = rs.getInt(3);
-			 String doa= rs.getString(4);
-			 String bstructure=rs.getString(5);
-			 String bindicator=rs.getString(6);
-			 String address=rs.getString(7);
-			 String email=rs.getString(8);
-			 String mobile=rs.getString(9);
-			 String status = rs.getString(10);
-			LoanInfo loan = new LoanInfo(applno,purpose,amtrequest,doa,bstructure,
-					bindicator,address,email,mobile,status);
-			loans.add(loan);
-			
-		}
+		loans = connDao.displayAllLoans();
 		request.setAttribute("loans", loans);
 		return "listall.jsp";
 	}

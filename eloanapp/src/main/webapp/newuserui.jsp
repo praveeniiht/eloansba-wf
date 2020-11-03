@@ -11,7 +11,7 @@
 <hr/>
 <div align=center>
 	<h2>New User Registration Page</h2>
-	<form action="registeruser" method="post">
+	<form action="user?action=registernewuser" method="post">
 		<div>
 			<div><label for="loginid">Enter login Id</label> </div>
 			<div><input type="text" id="loginid" name="loginid"> </div>
@@ -21,7 +21,7 @@
 			<div><input type="text" id="password" name="password"> </div>
 		</div>
 		<div>
-			<div><input type="submit" value="Login"> </div>
+			<div><input type="submit" value="create"> </div>
 		</div>
 		
 	</div>

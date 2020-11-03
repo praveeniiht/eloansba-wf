@@ -26,7 +26,7 @@ function myFunction() {
 <h4 align=center>Application form for Home Mortage</h4>
 <div align="right"><a href="userhome.jsp">UserHome</a></div>
 <div align="right"><a href="index.jsp">Logout</a></div>
-<form action="placeloan">
+<form action="user?action=placeloan">
 <table align=center border=1>
 	<tr>
 		<td>Application Number </td>

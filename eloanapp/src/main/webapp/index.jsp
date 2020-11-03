@@ -12,19 +12,19 @@
 <hr/>
 <div align=center>
 	<h2>eLoan Login</h2>
-	<form action="validate" method="post">
+	<form action="user?action=validate" method="post">
 		<div>
 			<div><label for="loginid">Enter login Id</label> </div>
 			<div><input type="text" id="loginid" name="loginid"> </div>
 		</div>
 		<div>
 			<div><label for="password">Enter password</label> </div>
-			<div><input type="text" id="password" name="password"> </div>
+			<div><input type="password" id="password" name="password"> </div>
 		</div>
 		<div>
 			<div><input type="submit" value="Login"> </div>
 		</div>
-		<a href="user?action=registerNewUser"><button>New User? register here</button></a>
+		<a href="user?action=registeruser">New User? register here</a>
 	</form>
 	</div>
 	</div>

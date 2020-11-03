@@ -11,7 +11,7 @@
 <body>
 <jsp:include page="header.jsp"/>
 <form action="admin?action=updatestatus" method="post">
-Loan Application Number: <input type="text" name="applno" value="${lid}"  /><br>
+Loan Application Number:<input type="text" name="applno" value="${lid}"  readonly/><br>
 <c:set var = "tid" scope = "session" value = "${lid}"/>
 Requested Amount: <c:out value="${ramount}" /><br>
 
@@ -20,7 +20,7 @@ Enter Sanctioned Amount <input type=text name="samount" /><br>
 Loan Term <input type=text name="term" value=20 /><br>
 Loan Payment Start Date <input type="text" name="startdate" /><br>
 Loan Payment End Date <input type="text" name="enddate" /><br>
-Monthly EMI <input type=text name="emi" /><br>
+Monthly EMI <input type=text name="emi"  value="${emi}"/><br>
 <input type="submit" value="Accept" />
 </form>
 <jsp:include page="footer.jsp"/>

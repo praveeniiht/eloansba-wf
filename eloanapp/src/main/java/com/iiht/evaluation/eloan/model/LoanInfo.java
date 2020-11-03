@@ -8,7 +8,13 @@ public class LoanInfo {
 	 private String bstructure;
 	 private String bindicator;
 	 private String address;
-	 private String email;
+	 @Override
+	public String toString() {
+		return "LoanInfo [applno=" + applno + ", purpose=" + purpose + ", amtrequest=" + amtrequest + ", doa=" + doa
+				+ ", bstructure=" + bstructure + ", bindicator=" + bindicator + ", address=" + address + ", email="
+				+ email + ", mobile=" + mobile + ", status=" + status + "]";
+	}
+	private String email;
 	 private String mobile;
 	 private String status;
 	 public LoanInfo() {
